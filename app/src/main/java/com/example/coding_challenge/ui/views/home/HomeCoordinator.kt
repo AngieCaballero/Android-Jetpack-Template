@@ -2,11 +2,11 @@ package com.example.coding_challenge.ui.views.home
 
 import androidx.compose.runtime.Composable
 import com.example.coding_challenge.domain.router.AppRouter
-import com.example.coding_challenge.domain.router.Coordinator
+import com.example.coding_challenge.domain.router.ComposableCoordinator
 
 class HomeCoordinator<R: AppRouter>(
     private var router: R
-) : Coordinator {
+) : ComposableCoordinator {
 
     private lateinit var view: @Composable () -> Unit
 
@@ -16,7 +16,7 @@ class HomeCoordinator<R: AppRouter>(
     }
 
     @Composable
-    override fun CoordinatedView() {
+    override fun CoordinatedScreen() {
         view
     }
 }

@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.coding_challenge.domain.router.AppRouter
-import com.example.coding_challenge.domain.router.Coordinator
+import com.example.coding_challenge.domain.router.ComposableCoordinator
 import com.example.coding_challenge.ui.views.SplashScreen
 
 class App(
@@ -14,7 +14,7 @@ class App(
 ) : AppRouter {
 
     private lateinit var root: String
-    private lateinit var nextCoordinator: Coordinator
+    private lateinit var routedCoordinator: ComposableCoordinator
 
     /*
     AppRouter
@@ -24,18 +24,18 @@ class App(
     }
 
     override fun popToRoot() {
-        navController.popBackStack(root, inclusive = true)
+        navController.popBackStack(root, inclusive = false)
     }
 
     override fun process(route: Screen) {
-        nextCoordinator = route.coordinatorFor(this)
-        nextCoordinator.start()
+        routedCoordinator = route.coordinatorFor(this)
+        routedCoordinator.start()
         navController.navigate(route = route.route)
     }
 
     override fun reset(startDestination: Screen) {
-        nextCoordinator = Screen.HomeScreen.coordinatorFor(this)
-        nextCoordinator.start()
+        routedCoordinator = Screen.HomeScreen.coordinatorFor(this)
+        routedCoordinator.start()
         navController.navigate(route = startDestination.route) {
             popUpTo(navController.graph.id) {
                 inclusive = true
@@ -62,11 +62,11 @@ class App(
                 SplashScreen(this@App)
             }
             composable(route = "home_screen") {
-                nextCoordinator.CoordinatedView()
+                routedCoordinator.CoordinatedScreen()
             }
 
             composable(route = "detail_screen" ) {
-                nextCoordinator.CoordinatedView()
+                routedCoordinator.CoordinatedScreen()
             }
         }
     }

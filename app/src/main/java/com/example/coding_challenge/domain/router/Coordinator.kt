@@ -5,7 +5,10 @@ import androidx.compose.runtime.Composable
 interface Coordinator {
 
    fun start()
+}
+
+interface ComposableCoordinator : Coordinator {
 
    @Composable
-   fun CoordinatedView()
+   fun CoordinatedScreen()
 }

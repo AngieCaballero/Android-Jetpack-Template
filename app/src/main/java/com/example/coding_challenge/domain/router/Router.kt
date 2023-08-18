@@ -6,18 +6,18 @@ import com.example.coding_challenge.Screen
 
 interface Router<Route> {
 
+    fun pop()
+
+    fun popToRoot()
+
     fun process(route: Route)
 }
 
 interface AppRouter : Router<Screen> {
 
-    fun pop()
-
-    fun popToRoot()
-
-    fun reset(startDestination: Screen = Screen.HomeScreen)
-
     @SuppressLint("ComposableNaming")
     @Composable
     fun start()
+
+    fun reset(startDestination: Screen = Screen.HomeScreen)
 }
