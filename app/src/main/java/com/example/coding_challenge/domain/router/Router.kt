@@ -15,9 +15,5 @@ interface Router<Route> {
 
 interface AppRouter : Router<Screen> {
 
-    @SuppressLint("ComposableNaming")
-    @Composable
-    fun start()
-
     fun reset(startDestination: Screen = Screen.HomeScreen)
 }

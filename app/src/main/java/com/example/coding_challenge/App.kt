@@ -1,20 +1,20 @@
 package com.example.coding_challenge
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.coding_challenge.domain.router.AppRouter
 import com.example.coding_challenge.domain.router.ComposableCoordinator
 import com.example.coding_challenge.ui.views.SplashScreen
 
-class App(
-    private val navController: NavHostController
-) : AppRouter {
+class App() : ViewModel(), AppRouter {
 
-    private lateinit var root: String
-    private lateinit var routedCoordinator: ComposableCoordinator
+    private lateinit var navController: NavHostController
+    private var root: Screen =  Screen.SplashScreen
+    private var routedCoordinator: ComposableCoordinator = root.coordinatorFor(this)
 
     /*
     AppRouter
@@ -24,7 +24,7 @@ class App(
     }
 
     override fun popToRoot() {
-        navController.popBackStack(root, inclusive = false)
+        navController.popBackStack(root.route, inclusive = false)
     }
 
     override fun process(route: Screen) {
@@ -43,20 +43,16 @@ class App(
         }
     }
 
-    @SuppressLint("ComposableNaming")
-    @Composable
-    override fun start() {
-        root = "splash_screen"
-        AppRouterConfiguration()
-    }
-
     /*
     =============================================================
      */
 
     @Composable
-    private fun AppRouterConfiguration() {
-        NavHost(navController = navController, startDestination = root) {
+    fun MainHost() {
+
+        this.navController = rememberNavController()
+
+        NavHost(navController = navController, startDestination = root.route) {
 
             composable(route = "splash_screen") {
                 SplashScreen(this@App)
