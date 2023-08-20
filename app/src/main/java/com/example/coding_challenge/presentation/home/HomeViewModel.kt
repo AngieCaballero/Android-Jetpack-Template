@@ -3,6 +3,11 @@ package com.example.coding_challenge.presentation.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.coding_challenge.domain.entity.DogResponse
+import com.example.coding_challenge.utils.Constants
+import com.example.coding_challenge.utils.Networking
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 sealed class HomeViewEvent {
@@ -33,8 +38,11 @@ class HomeViewModel(
         coordinator.goToNextScreen()
     }
     private fun didTapChangeBackgroundButton() {
+        viewModelScope.launch {
 
-        changeBackgroundColor()
+            val result: DogResponse? = Networking.request("breeds/image/random", Constants.BASE_URL, Networking.Companion.HTTPMethod.GET)
+            changeBackgroundColor()
+        }
     }
     private fun changeBackgroundColor() {
 
