@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    app.MainHost(onFinish = this::finish)
+                    app.MainHost(onFinish = this::finishAfterTransition)
                 }
             }
         }

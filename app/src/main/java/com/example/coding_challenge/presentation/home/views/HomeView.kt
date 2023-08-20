@@ -35,10 +35,12 @@ fun HomeView(
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(),
-            Arrangement.End
+            horizontalArrangement = Arrangement.End
         ) {
+
             Button(
                 onClick = {
+
                     onEvent(HomeViewEvent.DidTapNextButton)
                 }) {
 
@@ -50,8 +52,9 @@ fun HomeView(
             modifier = Modifier
                 .padding(vertical = 100.dp),
             onClick = {
+
                 onEvent(HomeViewEvent.DidTapChangeBackground)
-        }) {
+            }) {
 
             Text(text = "Change Background")
         }
@@ -66,7 +69,7 @@ fun HomeViewPreview() {
     CodingChallengeTheme {
         HomeView(
             HomeViewState(),
-            {}
+            { }
         )
     }
 }

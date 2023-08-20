@@ -14,16 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.coding_challenge.presentation.home.HomeViewState
-
-enum class SecondViewEvent {
-    DidTapBack,
-    DidTapNextButton,
-    DidTapChangeBackground
-}
+import com.example.coding_challenge.presentation.second_screen.SecondViewEvent
+import com.example.coding_challenge.presentation.second_screen.SecondViewState
 
 @Composable
 fun SecondView(
-    state: HomeViewState,
+    state: SecondViewState,
     onEvent: (SecondViewEvent) -> Unit
 ) {
 
@@ -43,6 +39,7 @@ fun SecondView(
         ) {
             Button(
                 onClick = {
+
                     onEvent(SecondViewEvent.DidTapBack)
                 }) {
 
@@ -51,22 +48,33 @@ fun SecondView(
 
             Button(
                 onClick = {
-                    onEvent(SecondViewEvent.DidTapNextButton)
+
+                    onEvent(SecondViewEvent.DidTapBack)
                 }) {
 
                 Text(text = "Next Screen")
             }
         }
 
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth(),
+            Arrangement.SpaceBetween
+        ) {
+
+            Text(text = state.message)
+        }
+
         Button(
             modifier = Modifier
                 .padding(vertical = 100.dp),
             onClick = {
+
                 onEvent(SecondViewEvent.DidTapChangeBackground)
             }) {
 
             Text(text = "Change Background")
         }
-
     }
 }

@@ -1,58 +1,84 @@
 package com.example.coding_challenge
 
-import android.annotation.SuppressLint
-import android.window.SplashScreen
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.coding_challenge.domain.router.AppRouter
 import com.example.coding_challenge.domain.router.ComposableCoordinator
-import com.example.coding_challenge.presentation.SplashScreen
+import com.example.coding_challenge.domain.router.Coordinator
 
 
-class App : ViewModel(), AppRouter {
+class App : ViewModel(), AppRouter, Coordinator {
+
+    private var routerIsOn: Boolean = false
 
     private lateinit var root: Screen
-    private lateinit var routedCoordinator: ComposableCoordinator
+    private lateinit var _currentCoordinator: MutableState<ComposableCoordinator>
     private lateinit var finish: () -> Unit
-    private lateinit var navController: NavHostController
 
     /*
     AppRouter
      */
+
+    private fun proceed() {
+
+        if (routerIsOn) { return }
+
+        start()
+        routerIsOn = true
+    }
+
+    override fun start() {
+
+        root = Screen.SplashScreen
+        val routedCoordinator = root.coordinatorFor(this)
+        routedCoordinator.start()
+        _currentCoordinator = mutableStateOf(routedCoordinator)
+    }
+
+    /*
+    Router
+     */
     override fun pop() {
-        if (navController.currentBackStack.value.count() == 2) finish()
-        Screen.pop()
-        navController.popBackStack()
+
+        val previousCoordinator: ComposableCoordinator = Screen.pop() ?: return finish()
+        _currentCoordinator.value = previousCoordinator
     }
 
     override fun popToRoot() {
+
         Screen.popToRoot(root)
-        routedCoordinator = root.coordinatorFor(this)
-        navController.popBackStack(root.route, inclusive = false)
+        _currentCoordinator.value = root.coordinatorFor(this)
     }
 
     override fun process(route: Screen) {
-        routedCoordinator = route.coordinatorFor(this)
-        routedCoordinator.start()
-        navController.navigate(route = route.route)
+
+        _currentCoordinator.value = route.coordinatorFor(this)
+        _currentCoordinator.value.start()
     }
 
     override fun reset(startDestination: Screen) {
-        routedCoordinator = startDestination.coordinatorFor(this) // Add the New startDestination Coordinator and start it
-        routedCoordinator.start()
 
-        Screen.popToRoot(startDestination)  //Clear your CoordinatorLogs
+        _currentCoordinator.value = startDestination.coordinatorFor(this) // Add the New startDestination Coordinator and start it
+        _currentCoordinator.value.start()
 
-        navController.navigate(route = startDestination.route) { //Navigate and clear the backStack
-            popUpTo(navController.graph.startDestinationId) {
-                inclusive = true
-            }
-        }
+        Screen.popToRoot(startDestination)  //Clear your Coordinator Logs
     }
     /*
     =============================================================
@@ -61,20 +87,24 @@ class App : ViewModel(), AppRouter {
     @Composable
     fun MainHost(onFinish: () -> Unit) {
 
+        proceed()
+        val routedCoordinator: ComposableCoordinator by remember { _currentCoordinator }
         this.finish = onFinish
-        this.navController = rememberNavController()
 
         BackHandler { pop() }
 
-        NavHost(navController = navController, startDestination = "splash_screen") {
-
-            composable(route = "splash_screen") {
-                SplashScreen(this@App)
-            }
-            composable(route = "home_screen") {
-                routedCoordinator.CoordinatedScreen()
-
-            }
+        Crossfade(
+            targetState = routedCoordinator,
+            modifier = Modifier.fillMaxSize(),
+            animationSpec = tween(durationMillis = 1000),
+            label = "Router_Transition"
+        ) { newCoordinator ->
+            Screen(state = newCoordinator)
         }
+    }
+    
+    @Composable 
+    fun Screen(state: ComposableCoordinator) {
+        state.CoordinatedScreen()
     }
 }
