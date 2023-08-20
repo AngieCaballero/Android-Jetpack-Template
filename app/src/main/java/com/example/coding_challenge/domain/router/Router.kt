@@ -15,5 +15,5 @@ interface Router<Route> {
 
 interface AppRouter : Router<Screen> {
 
-    fun reset(startDestination: Screen = Screen.HomeScreen)
+    fun reset(startDestination: Screen)
 }

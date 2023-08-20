@@ -1,4 +1,4 @@
-package com.example.coding_challenge.ui.theme
+package com.example.coding_challenge.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
